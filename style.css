@@ -106,3 +106,17 @@ input, select {
     cursor: pointer;
 }
 
+/* ===== MPD ===== */
+#mpd {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: #888;
+}
+
+#mpd span {
+    margin: 0 5px;
+    cursor: pointer;
+}

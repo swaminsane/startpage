@@ -25,6 +25,10 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_run()
             return
 
+        if self.path.startswith("/mpd"):
+            self.handle_mpd()
+            return
+
         return super().do_GET()
 
     # ===== FILE SEARCH =====
@@ -55,6 +59,39 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(str(e).encode())
+
+
+    # ==== MPD ====
+    def handle_mpd(self):
+    try:
+        current = subprocess.run(
+            ["mpc", "current"],
+            stdout=subprocess.PIPE,
+            text=True
+        ).stdout.strip()
+
+        status = subprocess.run(
+            ["mpc"],
+            stdout=subprocess.PIPE,
+            text=True
+        ).stdout
+
+        playing = "playing" in status
+
+        data = {
+            "song": current if current else "Nothing playing",
+            "playing": playing
+        }
+
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
+
+    except Exception as e:
+        self.send_response(500)
+        self.end_headers()
+        self.wfile.write(str(e).encode())
 
     # ===== RUN SCRIPT =====
     def handle_run(self):

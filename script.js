@@ -55,7 +55,7 @@ document.getElementById("search").addEventListener("keydown", async e => {
 
         /* ===== SHORTCUTS ===== */
         let shortcuts = {
-            yt: "https://www.youtube.com/results?search_query=",
+            yt: "https://invidious.nerdvpn.de/search?q=",
             arc: "https://archive.org/search?query=",
             wiki: "https://en.wikipedia.org/wiki/"
         };
@@ -132,6 +132,29 @@ function render() {
 
 /* ===== AUTO FOCUS SEARCH (nice UX) ===== */
 document.getElementById("search").focus();
+
+/* ===== MPD ===== */
+async function loadMPD() {
+    try {
+        let res = await fetch("/mpd");
+        let data = await res.json();
+
+        document.getElementById("song").innerText = data.song;
+    } catch {
+        document.getElementById("song").innerText = "mpd offline";
+    }
+}
+
+function toggleMPD() {
+    fetch("/mpd-toggle");
+}
+
+// click toggle
+document.getElementById("toggle").onclick = toggleMPD;
+
+// refresh every 5 sec
+setInterval(loadMPD, 5000);
+loadMPD();
 
 /* INIT */
 render();
