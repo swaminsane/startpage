@@ -133,27 +133,23 @@ function render() {
 /* ===== AUTO FOCUS SEARCH (nice UX) ===== */
 document.getElementById("search").focus();
 
-/* ===== MPD ===== */
+ /* ===== MPD ===== */
 async function loadMPD() {
     try {
         let res = await fetch("/mpd");
         let data = await res.json();
 
         document.getElementById("song").innerText = data.song;
+        document.getElementById("progress").style.width =
+            data.progress + "%";
+
     } catch {
         document.getElementById("song").innerText = "mpd offline";
     }
 }
 
-function toggleMPD() {
-    fetch("/mpd-toggle");
-}
-
-// click toggle
-document.getElementById("toggle").onclick = toggleMPD;
-
-// refresh every 5 sec
-setInterval(loadMPD, 5000);
+// refresh every 2 sec (smooth progress)
+setInterval(loadMPD, 2000);
 loadMPD();
 
 /* INIT */
