@@ -33,7 +33,7 @@ async function loadWeather() {
 loadWeather();
 setInterval(loadWeather, 600000);
 
-/* ===== SEARCH ===== */
+/* ===== SEARCH MODE ===== */
 let mode = "web";
 
 document.getElementById("toggle").onclick = () => {
@@ -42,21 +42,45 @@ document.getElementById("toggle").onclick = () => {
         "Mode: " + (mode === "web" ? "Web" : "Files");
 };
 
+/* ===== SMART SEARCH ===== */
 document.getElementById("search").addEventListener("keydown", async e => {
     if (e.key === "Enter") {
-        let q = e.target.value;
+        let q = e.target.value.trim();
 
+        if (!q) return;
+
+        let parts = q.split(" ");
+        let cmd = parts[0];
+        let rest = parts.slice(1).join(" ");
+
+        /* ===== SHORTCUTS ===== */
+        let shortcuts = {
+            yt: "https://www.youtube.com/results?search_query=",
+            arc: "https://archive.org/search?query=",
+            wiki: "https://en.wikipedia.org/wiki/"
+        };
+
+        // If shortcut matched
+        if (shortcuts[cmd]) {
+            let target = rest || cmd; // fallback if no extra text
+            window.location.href =
+                shortcuts[cmd] + encodeURIComponent(target);
+            return;
+        }
+
+        /* ===== NORMAL SEARCH ===== */
         if (mode === "web") {
             window.location.href =
-                "https://duckduckgo.com/?q=" + q;
+                "https://duckduckgo.com/?q=" + encodeURIComponent(q);
         } else {
-            let res = await fetch("/search?q=" + q);
+            let res = await fetch("/search?q=" + encodeURIComponent(q));
             let files = await res.json();
             showResults(files);
         }
     }
 });
 
+/* ===== FILE RESULTS ===== */
 function showResults(files) {
     let div = document.getElementById("results");
     div.innerHTML = "";
@@ -74,13 +98,15 @@ function showResults(files) {
 /* ===== BOOKMARKS (MANUAL ONLY) ===== */
 let bookmarks = {
     dev: [
-        { name: "GitHub", url: "https://github.com" },
-        { name: "Site", url: "https://swaminsane.github.io" } 
+        { name: "GitHub", url: "https://github.com/swaminsane" },
+        { name: "Site", url: "https://swaminsane.github.io"}
     ],
-    social: [],
+    social: [
+        { name: "Archive", url: "https://archive.org/details/@swami_vivekanand712/collections"}
+    ],
     media: [],
     tools: [
-        { name: "Syncthing", url: "http://localhost:8384/"}
+        { name: "Syncthing", url: "http://localhost:8384"}
     ]
 };
 
@@ -103,6 +129,9 @@ function render() {
         container.appendChild(card);
     });
 }
+
+/* ===== AUTO FOCUS SEARCH (nice UX) ===== */
+document.getElementById("search").focus();
 
 /* INIT */
 render();
