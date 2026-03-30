@@ -99,12 +99,16 @@ function showResults(files) {
 let bookmarks = {
     dev: [
         { name: "GitHub", url: "https://github.com/swaminsane" },
-        { name: "Site", url: "https://swaminsane.github.io"}
+        { name: "Site", url: "https://swaminsane.github.io"},
+        { name: "Arch Wiki", url: "https://wiki.archlinux.org/title/Main_page"}
     ],
     social: [
-        { name: "Archive", url: "https://archive.org/details/@swami_vivekanand712/collections"}
+        { name: "Archive", url: "https://archive.org/details/@swami_vivekanand712/collections"},
+        { name: "Mail", url: "https://mail.google.com/mail/u/0/#inbox"}
     ],
-    media: [],
+    media: [
+        { name: "Invidious", url: "https://invidious.nerdvpn.de/"}
+    ],
     tools: [
         { name: "Syncthing", url: "http://localhost:8384"}
     ]
